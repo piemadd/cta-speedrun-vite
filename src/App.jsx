@@ -9,6 +9,27 @@ const titleCase = (str) => {
   return str.join(" ");
 };
 
+const timeSince = (a, b) => {
+var delta = Math.abs(b - a) / 1000;
+
+// calculate (and subtract) whole days
+var days = Math.floor(delta / 86400);
+delta -= days * 86400;
+
+// calculate (and subtract) whole hours
+var hours = Math.floor(delta / 3600) % 24;
+delta -= hours * 3600;
+
+// calculate (and subtract) whole minutes
+var minutes = Math.floor(delta / 60) % 60;
+delta -= minutes * 60;
+
+// what's left is seconds
+var seconds = delta % 60;  // in theory the modulus is not required
+
+return `${hours}h ${minutes}m ${seconds}s`;
+}
+
 function App() {
   const [sections, setSections] = useState([]);
   const [tracking, setTracking] = useState({});
@@ -46,6 +67,15 @@ function App() {
         something goes wrong. The site will be rehosted with static data at the
         end of my run for archival purposes.
       </p>
+<h2>Total Time</h2>
+{sections.length === 0 ? (null) : (<p>
+{sections[sections.length - arrival === 0 ? (
+<>
+{timeSince(sections[0].departure, new Date().valueOf())}
+</>) : (<>
+{timeSince(sections[0].departure, sections[sections.length - 1].arrival)}
+</>)}
+</p>)}
       <h2>List of Sections</h2>
       <p>
         Below is a list of the various routes I am taking. Live tracking data
