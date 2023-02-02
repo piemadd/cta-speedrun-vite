@@ -69,7 +69,7 @@ function App() {
       </p>
 <h2>Total Time</h2>
 {sections.length === 0 ? (null) : (<p>
-{sections[sections.length - arrival === 0 ? (
+{sections[sections.length - 1].arrival === 0 ? (
 <>
 {timeSince(sections[0].departure, new Date().valueOf())}
 </>) : (<>
