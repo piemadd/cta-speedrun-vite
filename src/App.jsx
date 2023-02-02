@@ -27,7 +27,7 @@ delta -= minutes * 60;
 // what's left is seconds
 var seconds = delta % 60;  // in theory the modulus is not required
 
-return `${hours}h ${minutes}m ${seconds}s`;
+return `${hours}h ${minutes}m ${Math.floor(seconds)}s`;
 }
 
 function App() {
