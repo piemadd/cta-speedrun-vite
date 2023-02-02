@@ -1,0 +1,28 @@
+body {
+  background-color: rgb(19, 8, 82);
+  color: #fff;
+  font-family: 'Kanit', sans-serif;
+}
+
+h1 {
+  font-size: 4rem;
+}
+
+h2 {
+  font-size: 2rem;
+}
+
+p {
+  font-size: 1.25rem;
+}
+
+a, a::after {
+  color: rgb(69, 102, 207);
+}
+
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: left;
+}
