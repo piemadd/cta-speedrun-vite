@@ -127,6 +127,7 @@ function App() {
           </ul>
         )}
       </section>
+<p>This site uses google analytics for analytical purposes.</p>
     </main>
   );
 }
