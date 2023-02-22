@@ -1,0 +1,25 @@
+body {
+  background-color:#130852;
+  color:#fff;
+  font-family:Kanit,sans-serif
+ }
+ h1 {
+  font-size:4rem
+ }
+ h2 {
+  font-size:2rem
+ }
+ p {
+  font-size:1.25rem
+ }
+ a,
+ a:after {
+  color:#4566cf
+ }
+ #root {
+  max-width:1280px;
+  margin:0 auto;
+  padding:2rem;
+  text-align:left
+ }
+ 
