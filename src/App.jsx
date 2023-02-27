@@ -1,6 +1,9 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 
+const endpoint = "https://cta-speedrun-api-production.up.railway.app";
+//const endpoint = "http://localhost:5173";
+
 const titleCase = (str) => {
   str = str.toLowerCase().split(" ");
   for (var i = 0; i < str.length; i++) {
@@ -56,7 +59,7 @@ function App() {
 
   useEffect(() => {
     const updateData = () => {
-      fetch("https://cta-speedrun-api-production.up.railway.app/trip")
+      fetch(`${endpoint}/trip`)
         .then((response) => response.json())
         .then((data) => {
           setSections(data);
@@ -64,7 +67,7 @@ function App() {
           setLastUpdated(new Date().valueOf());
         });
 
-      fetch("https://cta-speedrun-api-production.up.railway.app/live")
+      fetch(`${endpoint}/live`)
         .then((response) => response.json())
         .then((data) => {
           setTracking(data);
@@ -76,7 +79,7 @@ function App() {
     };
 
     //api no longer exists
-    updateData();
+    //updateData();
   }, []);
 
   return (
@@ -84,34 +87,17 @@ function App() {
       <h1>Piero's CTA Speedrun Tracker</h1>
       <p>
         Hi, my name is Piero, and this is a little tool that can be used to
-        track my CTA speedrun. If something seems broken, you can always follow
-        along <a href='https://twitter.com/piemadd'>on my Twitter</a>.
-      </p>
-
-      <p>
-        The tracking should be *a lot* more accurate than my last run especially
-        since I've actually tested my code properly this time. The layout is
-        about the same, as I felt that it was probably the best I was gonna get.
-        If you would like to recommend any changes, feel free to reach out to me
-        on Twitter.
-      </p>
-
-      <p>
-        Are you a devloper? You can mess around with the api{" "}
-        <a href='https://cta-speedrun-api-production.up.railway.app/'>here</a>.
-        The <i>/live</i> endpoint relays live vehicle tracking and <i>/trip</i>{" "}
-        relays the information on the various segments being taken.
-      </p>
-
-      <p>
-        Below is a list of any previous runs I've done. I'll be updating this
-        every time I do a run, as I expect myself to do quite a few over time.
+        track my CTA speedrun. You can also follow along{" "}
+        <a href='https://twitter.com/piemadd'>on my Twitter</a>.
       </p>
 
       <h2>Previous Runs</h2>
       <ul>
         <li>
           <a href='/prev/2023-02-02/index.html'>Feb 02, 2023</a>
+        </li>
+        <li>
+          <a href='/prev/2023-02-23/index.html'>Feb 23, 2023</a>
         </li>
       </ul>
 
@@ -138,15 +124,10 @@ function App() {
       <p>
         {lastUpdated === 0
           ? "Data currently unavailable :("
-          : Math.floor((new Date().valueOf() - lastUpdated) / 1000) + " seconds ago"}
+          : Math.floor((new Date().valueOf() - lastUpdated) / 1000) +
+            " seconds ago"}
       </p>
       <h2>List of Sections</h2>
-      <p>
-        Below is a list of the various routes I am taking. Live tracking data
-        will be available for the entire route, minus my transfer from the green
-        line to the blue line, which uses a Pace bus. Their tracking is,
-        unfortunately, unavailable to the general public.
-      </p>
       <section id='sections-list'>
         {sections.length === 0 ? (
           <p>Sections list currently unavailable :(</p>
