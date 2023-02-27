@@ -215,7 +215,7 @@ function App() {
                             minute: "numeric",
                             second: "numeric",
                           }).format(
-                            new Date(tracking[section.segment_id].act_arr)
+                            new Date(tracking[section.segment_id].arrival)
                           )}
                         </li>
                       </ul>
