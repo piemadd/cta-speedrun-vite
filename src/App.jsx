@@ -44,6 +44,27 @@ const timeSince = (a, b) => {
   return `${prefix}${hours}h ${minutes}m ${Math.floor(seconds)}s`;
 };
 
+const parseDate = (date, time, tzOffset) => {
+  // date looks like 2/2/2023
+  // time looks like 20:52:01
+  // tzOffset looks like -04
+
+  const dateParts = date.split("/");
+  const timeParts = time.split(":");
+
+  const dateString = `${dateParts[2]}-${dateParts[0].padStart(
+    2,
+    "0"
+  )}-${dateParts[1].padStart(2, "0")}T${timeParts[0].padStart(
+    2,
+    "0"
+  )}:${timeParts[1].padStart(2, "0")}:${timeParts[2].padStart(
+    2,
+    "0"
+  )}${tzOffset}`;
+  return new Date(dateString);
+};
+
 function App() {
   const [sections, setSections] = useState([]);
   const [lastUpdated, setLastUpdated] = useState(0);
@@ -53,7 +74,7 @@ function App() {
   useEffect(() => {
     const interval = setInterval(() => {
       setTime(new Date());
-    }, 250);
+    }, 1000);
 
     return () => clearInterval(interval);
   }, []);
@@ -70,9 +91,10 @@ function App() {
 
           setSections(parsed);
 
+          console.log("data", parsed);
+
           setLastUpdated(new Date().valueOf());
         });
-
       setTimeout(updateData, 60000);
     };
 
@@ -83,6 +105,7 @@ function App() {
   return (
     <main>
       <h1>Piero's CTA Speedrun</h1>
+      <p><i>Now with friends!</i></p>
       <p>
         Hi, my name is Piero, and this is a little tool that can be used to
         track my attempts. You can also follow along{" "}
@@ -94,7 +117,8 @@ function App() {
         <a href='https://discord.gg/wPrCYXJP9p'>join the discord</a> or{" "}
         <a href='mailto:piero@piemadd.com'>email me</a>.
       </p>
-
+<br/>
+<p>This run (my third) will be done with some friends: Hazel, Jude, Ketu, and Lucy!</p>
       <h2>Previous Runs</h2>
       <ul>
         <li>
@@ -108,8 +132,61 @@ function App() {
       <h2>Current Run</h2>
       {sections.length > 0 ? (
         <>
+          <p>Last Updated: {timeSince(lastUpdated, time.valueOf())} ago</p>
+          {
+            // if the first section's act_dep is 0:00:00, make a countdown
+            sections[0].act_dep === "0:00:00" ? (
+              <p>
+                <strong>
+                  {timeSince(
+                    parseDate(
+                      sections[0].date,
+                      sections[0].sch_dep,
+                      sections[0].tz_offset
+                    ).valueOf(),
+                    time.valueOf()
+                  )}
+                </strong>{" "}
+                until scheduled run start
+              </p>
+            ) : // if the last sections's act_arr isn't 0:00:00, display the final time
+            sections[sections.length - 1].act_arr === "0:00:00" ? (
+              <p>
+                <strong>
+                  {timeSince(
+                    parseDate(
+                      sections[0].date,
+                      sections[0].act_dep,
+                      sections[0].tz_offset
+                    ),
+                    time.valueOf()
+                  )}
+                </strong>{" "}
+                since run start
+              </p>
+            ) : (
+              <p>
+                <strong>
+                  Final time:{" "}
+                  {timeSince(
+                    parseDate(
+                      sections[0].date,
+                      sections[0].act_dep,
+                      sections[0].tz_offset
+                    ),
+                    parseDate(
+                      sections[sections.length - 1].date,
+                      sections[sections.length - 1].act_arr,
+                      sections[sections.length - 1].tz_offset
+                    )
+                  )}
+                </strong>{" "}
+              </p>
+            )
+          }
+          <br />
           {sections.map((section) => (
-            <RouteSegment segment={section} key={section.segment_id}/>
+            <RouteSegment segment={section} key={section.segment_id} />
           ))}
         </>
       ) : (

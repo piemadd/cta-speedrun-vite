@@ -1,19 +1,4 @@
-const testData = {
-  segment_name: "Pink",
-  segment_id: "pink",
-  segment_line: "train_pink",
-  start_station_name: "Polk",
-  end_station_name: "54th/Cermak",
-  sch_dep: "6:01:00",
-  sch_arr: "6:19:00",
-  act_dep: "0:00:00",
-  act_arr: "0:00:00",
-  tracking: "1",
-  segment_color: "e27ea6",
-  segment_text_color: "ffffff",
-};
-
-const RouteSegment = ({ segment }) => {
+const RouteSegment = ({ segment }) => { 
   return (
     <div
       style={{
@@ -38,7 +23,7 @@ const RouteSegment = ({ segment }) => {
         <p
           style={{
             textDecoration: "underline dotted",
-            fontWeight: "bold",
+            fontWeight: "500",
             marginTop: "-4px",
           }}
         >
