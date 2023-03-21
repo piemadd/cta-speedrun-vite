@@ -1,28 +1,43 @@
-body {
-  background-color: rgb(12, 5, 51);
+html, body {
+  background-color: #222;
   color: #fff;
   font-family: 'Kanit', sans-serif;
+  width: 100%;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
 }
 
-h1 {
-  font-size: 4rem;
-}
-
-h2 {
-  font-size: 2rem;
-}
-
-p {
-  font-size: 1.25rem;
-}
-
-a, a::after {
-  color: rgb(69, 102, 207);
+body {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: left;
+  width: 100%;
+  max-width: 960px;
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+main {
+  width: calc(100% - 32px);
+  min-height: calc(100vh - 32px);
+  padding: 6px 16px 16px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+h1, h2, h3, h4, h5, h6, p, a, ul, li, span, div {
+  font-family: 'Kanit', sans-serif;
+  margin: 0;
+}
+
+a, a:visited {
+  color: #fff;
+  text-decoration: underline;
 }

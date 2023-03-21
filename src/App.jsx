@@ -1,8 +1,10 @@
 import { useState, useEffect } from "react";
+import { parse } from "csv-parse/browser/esm/sync";
 import "./App.css";
+import RouteSegment from "./routeSegment";
 
-const endpoint = "https://cta-speedrun-api-production.up.railway.app";
-//const endpoint = "http://localhost:5173";
+const endpoint =
+  "https://docs.google.com/spreadsheets/d/e/2PACX-1vT6WGmf9kubHJfoVWYPQPC-OdnMhK1xUSldie0ZPeMOpdFI2NsL_3DeJeMwoJcXyzRDshTTgn5z67Vz/pub?gid=986120183&single=true&output=csv";
 
 const titleCase = (str) => {
   str = str.toLowerCase().split(" ");
@@ -44,7 +46,6 @@ const timeSince = (a, b) => {
 
 function App() {
   const [sections, setSections] = useState([]);
-  const [tracking, setTracking] = useState({});
   const [lastUpdated, setLastUpdated] = useState(0);
 
   const [time, setTime] = useState(new Date());
@@ -59,36 +60,39 @@ function App() {
 
   useEffect(() => {
     const updateData = () => {
-      fetch(`${endpoint}/trip`)
-        .then((response) => response.json())
+      fetch(endpoint)
+        .then((response) => response.text())
         .then((data) => {
-          setSections(data);
-          console.log("updated trip data");
+          const parsed = parse(data, {
+            columns: true,
+            skip_empty_lines: true,
+          });
+
+          setSections(parsed);
+
           setLastUpdated(new Date().valueOf());
         });
 
-      fetch(`${endpoint}/live`)
-        .then((response) => response.json())
-        .then((data) => {
-          setTracking(data);
-          console.log("updated vehicle data");
-          setLastUpdated(new Date().valueOf());
-        });
-
-      setTimeout(updateData, 30000);
+      setTimeout(updateData, 60000);
     };
 
     //api no longer exists
-    //updateData();
+    updateData();
   }, []);
 
   return (
     <main>
-      <h1>Piero's CTA Speedrun Tracker</h1>
+      <h1>Piero's CTA Speedrun</h1>
       <p>
         Hi, my name is Piero, and this is a little tool that can be used to
-        track my CTA speedrun. You can also follow along{" "}
+        track my attempts. You can also follow along{" "}
         <a href='https://twitter.com/piemadd'>on my Twitter</a>.
+      </p>
+
+      <p>
+        Have questions about speedrunning the CTA? You can{" "}
+        <a href='https://discord.gg/wPrCYXJP9p'>join the discord</a> or{" "}
+        <a href='mailto:piero@piemadd.com'>email me</a>.
       </p>
 
       <h2>Previous Runs</h2>
@@ -101,136 +105,18 @@ function App() {
         </li>
       </ul>
 
-      <h2>Total Time</h2>
-      {sections.length === 0 ? null : (
-        <p
-          style={{
-            fontSize: "2rem",
-          }}
-        >
-          {sections[sections.length - 1].act_arr === 0 ? (
-            <>{timeSince(sections[0].act_dep, new Date().valueOf())}</>
-          ) : (
-            <>
-              {timeSince(
-                sections[0].act_dep,
-                sections[sections.length - 1].act_arr
-              )}
-            </>
-          )}
-        </p>
+      <h2>Current Run</h2>
+      {sections.length > 0 ? (
+        <>
+          {sections.map((section) => (
+            <RouteSegment segment={section} key={section.segment_id}/>
+          ))}
+        </>
+      ) : (
+        <p>Loading...</p>
       )}
-      <h2>Data Last Updated</h2>
-      <p>
-        {lastUpdated === 0
-          ? "Data currently unavailable :("
-          : Math.floor((new Date().valueOf() - lastUpdated) / 1000) +
-            " seconds ago"}
-      </p>
-      <h2>List of Sections</h2>
-      <section id='sections-list'>
-        {sections.length === 0 ? (
-          <p>Sections list currently unavailable :(</p>
-        ) : (
-          <ul>
-            {sections.map((section) => (
-              <li key={section.segment_id}>
-                <h3>{section.segment_name}</h3>
-                <ul>
-                  <li>Start Station: {section.start_station_name}</li>
-                  <li>End Station: {section.end_station_name}</li>
-                  <li>
-                    Travel Mode: {titleCase(section.segment_line.split("_")[0])}
-                  </li>
-                  <li>
-                    Route Name/Number:{" "}
-                    {titleCase(section.segment_line.split("_")[1] ?? "N/A")}
-                  </li>
-                  <li>
-                    Ideal Timings (Based on schedule, unrealistic with the
-                    current state of the CTA):
-                    <ul>
-                      <li>
-                        Departure:{" "}
-                        {new Intl.DateTimeFormat([], {
-                          timeZone: "America/Chicago",
-                          hour: "numeric",
-                          minute: "numeric",
-                          second: "numeric",
-                        }).format(new Date(section.sch_dep))}
-                      </li>
-                      <li>
-                        Arrival:{" "}
-                        {new Intl.DateTimeFormat([], {
-                          timeZone: "America/Chicago",
-                          hour: "numeric",
-                          minute: "numeric",
-                          second: "numeric",
-                        }).format(new Date(section.sch_arr))}
-                      </li>
-                    </ul>
-                  </li>
-                  <li>
-                    Actual Timings:
-                    <ul>
-                      <li>
-                        Departure:{" "}
-                        {section.act_dep === 0
-                          ? "N/A"
-                          : new Intl.DateTimeFormat([], {
-                              timeZone: "America/Chicago",
-                              hour: "numeric",
-                              minute: "numeric",
-                              second: "numeric",
-                            }).format(new Date(section.act_dep))}
-                      </li>
-                      <li>
-                        Arrival:{" "}
-                        {section.act_arr === 0
-                          ? "N/A"
-                          : new Intl.DateTimeFormat([], {
-                              timeZone: "America/Chicago",
-                              hour: "numeric",
-                              minute: "numeric",
-                              second: "numeric",
-                            }).format(new Date(section.act_arr))}
-                      </li>
-                    </ul>
-                  </li>
-                  <li>
-                    Tracking Data:
-                    {Object.keys(tracking).some(
-                      (item) => item === section.segment_id
-                    ) ? (
-                      <ul>
-                        <li>
-                          Vehicle ID/Run Number:{" "}
-                          {tracking[section.segment_id].vehicle_id}
-                        </li>
-                        <li>
-                          Estimated Arrival Time:{" "}
-                          {new Intl.DateTimeFormat([], {
-                            timeZone: "America/Chicago",
-                            hour: "numeric",
-                            minute: "numeric",
-                            second: "numeric",
-                          }).format(
-                            new Date(tracking[section.segment_id].arrival)
-                          )}
-                        </li>
-                      </ul>
-                    ) : (
-                      <ul>
-                        <li>Tracking data currently unavailable :(</li>
-                      </ul>
-                    )}
-                  </li>
-                </ul>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+
+      <br />
       <p>This site uses google analytics for analytical purposes.</p>
     </main>
   );
