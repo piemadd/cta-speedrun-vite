@@ -6,7 +6,7 @@ const RouteSegment = ({ segment }) => {
         color: segment.segment_text_color,
         padding: "2px 6px",
         space: "200px",
-        maxWidth: "350px",
+        maxWidth: "450px",
       }}
     >
       <div
