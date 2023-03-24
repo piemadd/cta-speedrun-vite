@@ -1,4 +1,13 @@
-const RouteSegment = ({ segment }) => { 
+import parseDate from "./parseDate";
+
+const formatTime = (time) => {
+  return new Intl.DateTimeFormat([], {
+    timeStyle: "short",
+    timeZone: "America/Chicago",
+  }).format(time);
+};
+
+const RouteSegment = ({ segment }) => {
   return (
     <div
       style={{
@@ -16,13 +25,16 @@ const RouteSegment = ({ segment }) => {
           verticalAlign: "middle",
         }}
       >
-        <h3>{segment.segment_name}</h3>
+        <h3 style={{
+          fontWeight: 500,
+          textDecoration: "underline dotted",
+        }}>{segment.segment_name}</h3>
         <p>{segment.segment_line_en}</p>
       </div>
       <div>
         <p
           style={{
-            textDecoration: "underline dotted",
+            fontStyle: "italic",
             fontWeight: "500",
             marginTop: "-4px",
           }}
@@ -33,11 +45,21 @@ const RouteSegment = ({ segment }) => {
           Start:{" "}
           {segment.act_dep !== "0:00:00" ? (
             <>
-              {segment.act_dep} ({segment.sch_dep} scheduled)
+              {formatTime(
+                parseDate(segment.date, segment.act_dep, segment.tz_offset)
+              )}{" "}
+              (
+              {formatTime(
+                parseDate(segment.date, segment.sch_dep, segment.tz_offset)
+              )}{" "}
+              scheduled)
             </>
           ) : (
             <>
-              {segment.sch_dep} scheduled
+              {formatTime(
+                parseDate(segment.date, segment.sch_dep, segment.tz_offset)
+              )}{" "}
+              scheduled
             </>
           )}
         </p>
@@ -45,11 +67,21 @@ const RouteSegment = ({ segment }) => {
           End:{" "}
           {segment.act_arr !== "0:00:00" ? (
             <>
-              {segment.act_arr} ({segment.sch_arr} scheduled)
+              {formatTime(
+                parseDate(segment.date, segment.act_arr, segment.tz_offset)
+              )}{" "}
+              (
+              {formatTime(
+                parseDate(segment.date, segment.sch_arr, segment.tz_offset)
+              )}{" "}
+              scheduled)
             </>
           ) : (
             <>
-              {segment.sch_arr} scheduled
+              {formatTime(
+                parseDate(segment.date, segment.sch_arr, segment.tz_offset)
+              )}{" "}
+              scheduled
             </>
           )}
         </p>

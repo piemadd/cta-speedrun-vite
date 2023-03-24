@@ -2,9 +2,7 @@ import { useState, useEffect } from "react";
 import { parse } from "csv-parse/browser/esm/sync";
 import "./App.css";
 import RouteSegment from "./routeSegment";
-
-const endpoint =
-  "https://docs.google.com/spreadsheets/d/e/2PACX-1vT6WGmf9kubHJfoVWYPQPC-OdnMhK1xUSldie0ZPeMOpdFI2NsL_3DeJeMwoJcXyzRDshTTgn5z67Vz/pub?gid=986120183&single=true&output=csv";
+import parseDate from "./parseDate";
 
 const titleCase = (str) => {
   str = str.toLowerCase().split(" ");
@@ -44,32 +42,11 @@ const timeSince = (a, b) => {
   return `${prefix}${hours}h ${minutes}m ${Math.floor(seconds)}s`;
 };
 
-const parseDate = (date, time, tzOffset) => {
-  // date looks like 2/2/2023
-  // time looks like 20:52:01
-  // tzOffset looks like -04
-
-  const dateParts = date.split("/");
-  const timeParts = time.split(":");
-
-  const dateString = `${dateParts[2]}-${dateParts[0].padStart(
-    2,
-    "0"
-  )}-${dateParts[1].padStart(2, "0")}T${timeParts[0].padStart(
-    2,
-    "0"
-  )}:${timeParts[1].padStart(2, "0")}:${timeParts[2].padStart(
-    2,
-    "0"
-  )}${tzOffset}`;
-  return new Date(dateString);
-};
-
 function App() {
   const [sections, setSections] = useState([]);
   const [lastUpdated, setLastUpdated] = useState(0);
 
-  const [time, setTime] = useState(new Date());
+  const [time, setTime] = useState(new Date().valueOf());
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -81,7 +58,10 @@ function App() {
 
   useEffect(() => {
     const updateData = () => {
-      fetch(endpoint)
+      // i love databases
+      fetch(
+        "https://docs.google.com/spreadsheets/d/e/2PACX-1vT6WGmf9kubHJfoVWYPQPC-OdnMhK1xUSldie0ZPeMOpdFI2NsL_3DeJeMwoJcXyzRDshTTgn5z67Vz/pub?gid=986120183&single=true&output=csv"
+      )
         .then((response) => response.text())
         .then((data) => {
           const parsed = parse(data, {
@@ -93,19 +73,21 @@ function App() {
 
           console.log("data", parsed);
 
+          // for "time since last update"
           setLastUpdated(new Date().valueOf());
         });
       setTimeout(updateData, 60000);
     };
 
-    //api no longer exists
     updateData();
   }, []);
 
   return (
     <main>
       <h1>Piero's CTA Speedrun</h1>
-      <p><i>Now with friends!</i></p>
+      <p>
+        <i>Now with friends!</i>
+      </p>
       <p>
         Hi, my name is Piero, and this is a little tool that can be used to
         track my attempts. You can also follow along{" "}
@@ -117,8 +99,11 @@ function App() {
         <a href='https://discord.gg/wPrCYXJP9p'>join the discord</a> or{" "}
         <a href='mailto:piero@piemadd.com'>email me</a>.
       </p>
-<br/>
-<p>This run (my third) will be done with some friends: Hazel, Jude, Ketu, and Lucy!</p>
+      <br />
+      <p>
+        This run (my third) will be done with some friends: Hazel, Jude, Ketu,
+        and Lucy!
+      </p>
       <h2>Previous Runs</h2>
       <ul>
         <li>
